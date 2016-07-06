@@ -5,15 +5,22 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var swig = require('swig');
+var cors = require('cors');
 
 var routes = require('./routes/index');
 var api = require('./routes/api');
 
 var app = express();
 
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
+
 var env = process.env.NODE_ENV || 'development';
 app.locals.ENV = env;
 app.locals.ENV_DEVELOPMENT = env == 'development';
+
+//CORS allow all
+app.use(cors());
 
 // view engine setup
 app.engine('swig', swig.renderFile)
@@ -69,21 +76,5 @@ app.use(function(err, req, res, next) {
 		title: 'error'
 	});
 });
-
-// Add headers
-app.use(function(req, res, next) {
-	// Website you wish to allow to connect
-	res.setHeader('Access-Control-Allow-Origin', '*');
-
-	// Request methods you wish to allow
-	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-
-	// Request headers you wish to allow
-	res.setHeader('Access-Control-Allow-Headers', '*');
-
-	// Pass to next layer of middleware
-	next();
-});
-
 
 module.exports = app;

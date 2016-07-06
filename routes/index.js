@@ -8,7 +8,7 @@ var valid_url = require('valid-url');
 
 router.get('/', function(req, res) {
 	res.render('index', {
-		title: 'Express, toHttp v'.concat("1")
+		title: "toHttp"
 	});
 });
 

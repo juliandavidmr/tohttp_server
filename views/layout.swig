@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
 
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <meta name="description" content="Web app style with Bootstrap 3"/>
+
+    <meta name="description" content="tohttp is a module for HTTP requests from HTTPS, either from the client side (in the browser) or server side (with node js)."/>
+    <meta name="keywords" content="http,https,request,ssl,security,peticion,seguridad,development,npm,nodejs">
+    <meta name="author" content="@anlijudavid">
+
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
 
     <title>{{ title }}</title>
@@ -20,7 +24,7 @@
         <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target=".navbar-collapse">
           <i class="icon-reorder"></i>
         </button>
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="/">
           toHttp
         </a>
       </div>
@@ -34,21 +38,26 @@
             </a>
             <ul class="dropdown-menu">
               <li>
-                <a href="#">GET Request</a>
+                <a href="https://www.npmjs.com/package/tohttp">GET Request</a>
               </li>
               <li>
-                <a href="#">POST Request</a>
+                <a href="https://www.npmjs.com/package/tohttp">POST Request</a>
               </li>
               <li>
-                <a href="#">PUT Request</a>
+                <a href="https://www.npmjs.com/package/tohttp">PUT Request</a>
               </li>
               <li>
-                <a href="#">DELETE Request</a>
+                <a href="https://www.npmjs.com/package/tohttp">DELETE Request</a>
               </li>
             </ul>
           </li>
           <li>
             <a href="#">About</a>
+          </li>
+          <li>
+            <a href="javascript:void(0)">
+              <span class="label label-info" id="online"></span>
+            </a>
           </li>
         </ul>
         <ul class="nav navbar-nav pull-right">
@@ -67,108 +76,58 @@
         </ul>
       </nav>
     </div>
-    <div id="wrapper">
-      <div id="sidebar-wrapper" class="col-md-1">
-        <div id="sidebar">
-          <ul class="nav list-group">
-            <li>
-              <a class="list-group-item" href="#">
-                <i class="icon-home icon-1x"></i>Sidebar Item 1</a>
-            </li>
-            <li>
-              <a class="list-group-item" href="#">
-                <i class="icon-home icon-1x"></i>Sidebar Item 2</a>
-            </li>
-            <li>
-              <a class="list-group-item" href="#">
-                <i class="icon-home icon-1x"></i>Sidebar Item 3</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div id="main-wrapper" class="col-md-11 pull-right">
-        <div id="main">
-          <div class="page-header">
-            <h3>Admin</h3>
-          </div>
-          <p>
-            {% block content %}{% endblock %}
-          </p>
-        </div>
-      </div>
+
+    <div class="col-md-12">
+      <br>
+      <br>
+      <br>
+      <p>
+        {% block content %}{% endblock %}
+      </p>
     </div>
 
     <script type='text/javascript' src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-
     <script type='text/javascript' src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 
     <!-- JavaScript jQuery code from Bootply.com editor  -->
-
     <script type='text/javascript'>
-
       $(document).ready(function () {});
     </script>
 
-    <style>
-      .ad {
-        position: absolute;
-        bottom: 70px;
-        right: 48px;
-        z-index: 992;
-        background-color: #f3f3f3;
-        position: fixed;
-        width: 155px;
-        padding: 1px;
-      }
+    <!-- socket  -->
+    <script src="/socket.io/socket.io.js"></script>
 
-      .ad-btn-hide {
-        position: absolute;
-        top: -10px;
-        left: -12px;
-        background: #fefefe;
-        background: rgba(240,240,240,0.9);
-        border: 0;
-        border-radius: 26px;
-        cursor: pointer;
-        padding: 2px;
-        height: 25px;
-        width: 25px;
-        font-size: 14px;
-        vertical-align: top;
-        outline: 0;
-      }
+    <script>
+      var full = location.protocol+'//'+location.hostname + (location.port ? ':'+location.port: '');
+      console.log("full> ", full);
 
-      .carbon-img {
-        float: left;
-        padding: 10px;
-      }
+      var socket = io.connect(full, {'forceNew': true});
 
-      .carbon-text {
-        color: #888;
-        display: inline-block;
-        font-family: Verdana;
-        font-size: 11px;
-        font-weight: 400;
-        height: 60px;
-        margin-left: 9px;
-        width: 142px;
-        padding-top: 10px;
-      }
-      .carbon-text:hover {
-        color: #666;
-      }
+      socket.on('user connected', function (data) {
+        console.log(data);
+        document.getElementById('online').innerHTML = msg(data);
+      });
 
-      .carbon-poweredby {
-        color: #6A6A6A;
-        float: left;
-        font-family: Verdana;
-        font-size: 11px;
-        font-weight: 400;
-        margin-left: 10px;
-        margin-top: 13px;
-        text-align: center;
-      }
+      socket.on("user disconnected", function(data) {
+        console.log("client disconnected from server", data);
+        document.getElementById('online').innerHTML = msg(data);
+      });
 
-    </style>
+      socket.on("state", function(data) {
+        document.getElementById('state').innerHTML = data;
+      });
+
+      socket.on("disconnect", function(){
+        console.log("Disconnected from server. :(");
+      });
+
+      socket.on('connect', function(msg){
+        console.log("Conectado");
+      });
+
+      function msg(d) {
+        return "Online ".concat(d);
+      }
+    </script>
   </body>
 </html>

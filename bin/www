@@ -6,3 +6,22 @@ app.set('port', process.env.PORT || 3000);
 var server = app.listen(app.get('port'), function() {
   console.log('Express server listening on port ' + server.address().port);
 });
+
+// socket.io
+var io = require('socket.io')(server);
+
+var count = 0;
+
+// Set socket.io listeners.
+io.on('connection', (socket) => {
+  socket.emit('user connected', ++count);
+  socket.emit('state', "Service running! :)");
+
+  socket.on('disconnect', function(){
+    io.emit('user disconnected', --count);
+  });
+
+  setInterval(function () {
+    socket.volatile.emit('state', "Service running! :)");
+  }, 10000);
+});
